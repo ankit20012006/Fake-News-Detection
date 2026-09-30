@@ -1,0 +1,5 @@
+streamlit
+joblib
+pandas
+plotly
+scikit-learn==1.6.1
