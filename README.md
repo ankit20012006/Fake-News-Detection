@@ -69,6 +69,13 @@ The training script reports evaluation metrics and writes `lr_model_new.jb` and 
 | `news.ipynb` | Model exploration notebook |
 | `requirements.txt` | Python dependencies; scikit-learn is pinned to match the bundled models |
 
+
+## 📊 Model Performance
+
+- Algorithm: Logistic Regression
+- Feature Extraction: TF-IDF
+- Test Accuracy: 98.60%
+
 ## Troubleshooting
 
 - **`No module named streamlit`:** Activate the project environment and run `python -m pip install -r requirements.txt`.
