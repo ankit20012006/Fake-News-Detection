@@ -75,5 +75,9 @@ The training script reports evaluation metrics and writes `lr_model_new.jb` and 
 - **Model file not found:** Run Streamlit from the project directory and make sure `lr_model.jb` and `vectorizer.jb` are present.
 - **Model version warning:** Install dependencies from `requirements.txt`; the bundled model files were serialized with scikit-learn 1.6.1.
 
+  ## 🚀 Deployment
+The application is deployed on Render and is available online:
+🔗 **Live Demo:** https://fake-news-detection-8cpi.onrender.com/
+
 
 
