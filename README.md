@@ -69,22 +69,11 @@ The training script reports evaluation metrics and writes `lr_model_new.jb` and 
 | `news.ipynb` | Model exploration notebook |
 | `requirements.txt` | Python dependencies; scikit-learn is pinned to match the bundled models |
 
-
-## 📊 Model Performance
-
-- Algorithm: Logistic Regression
-- Feature Extraction: TF-IDF
-- Test Accuracy: 98.60%
-
 ## Troubleshooting
 
 - **`No module named streamlit`:** Activate the project environment and run `python -m pip install -r requirements.txt`.
 - **Model file not found:** Run Streamlit from the project directory and make sure `lr_model.jb` and `vectorizer.jb` are present.
 - **Model version warning:** Install dependencies from `requirements.txt`; the bundled model files were serialized with scikit-learn 1.6.1.
-
-  ## 🚀 Deployment
-The application is deployed on Render and is available online:
-🔗 **Live Demo:** https://fake-news-detection-8cpi.onrender.com/
 
 
 
