@@ -393,6 +393,7 @@ if "history" not in st.session_state:
 with st.sidebar:
     st.markdown("## ✨ Dashboard")
     st.caption("Bright glassmorphism analytics panel")
+    dark_mode = st.toggle("🌙 Dark mode", key="dark_mode")
     st.metric("Predictions Made", len(st.session_state.history))
     st.markdown("### Quick Tips")
     st.markdown("- Use full news paragraph for better accuracy")
@@ -401,6 +402,108 @@ with st.sidebar:
         st.session_state.history = []
         st.success("History cleared")
         st.rerun()
+
+if dark_mode:
+    st.markdown(
+        """
+        <style>
+        :root {
+            color-scheme: dark;
+            --dark-bg: #111827;
+            --dark-surface: rgba(31, 41, 55, 0.9);
+            --dark-surface-strong: rgba(17, 24, 39, 0.96);
+            --dark-text: #f3f4f6;
+            --dark-muted: #d1d5db;
+            --dark-border: rgba(156, 163, 175, 0.45);
+        }
+
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 52%, #172554 100%) !important;
+        }
+
+        .block-container,
+        [data-testid="stSidebar"] {
+            background: var(--dark-surface) !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        h1, h2, h3, h4, p, label, .stMarkdown, .stCaption,
+        [data-testid="stMarkdownContainer"], [data-testid="stCaptionContainer"],
+        [data-testid="stMetricLabel"], [data-testid="stMetricValue"],
+        [data-testid="stSidebar"] *, .result-meta, .status-top, .status-line,
+        .stAlert, [data-testid="stNotification"] {
+            color: var(--dark-text) !important;
+        }
+
+        .stCaption, [data-testid="stCaptionContainer"] {
+            color: var(--dark-muted) !important;
+        }
+
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stTextInput"] input,
+        [data-baseweb="select"] > div,
+        [data-baseweb="select"] span,
+        [data-baseweb="select"] input {
+            color: var(--dark-text) !important;
+            background: var(--dark-surface-strong) !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        [data-baseweb="select"] svg {
+            fill: var(--dark-muted) !important;
+        }
+
+        [data-testid="stTextArea"] textarea::placeholder,
+        input::placeholder {
+            color: var(--dark-muted) !important;
+        }
+
+        [role="listbox"], [role="option"] {
+            background: #1f2937 !important;
+            color: var(--dark-text) !important;
+        }
+
+        [role="option"][aria-selected="true"] {
+            background: #374151 !important;
+        }
+
+        [data-testid="stButton"] button,
+        [data-testid="stDownloadButton"] button {
+            color: var(--dark-text) !important;
+            background: #374151 !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        [data-testid="stButton"] button p,
+        [data-testid="stDownloadButton"] button p {
+            color: var(--dark-text) !important;
+        }
+
+        [data-testid="stMetric"], .result-banner, .status-timeline,
+        [data-baseweb="tab-list"] {
+            background: var(--dark-surface) !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        button[data-baseweb="tab"] {
+            color: var(--dark-muted) !important;
+        }
+
+        button[data-baseweb="tab"][aria-selected="true"] {
+            color: var(--dark-text) !important;
+            background: #374151 !important;
+        }
+
+        [data-testid="stDataFrame"] table,
+        [data-testid="stDataFrame"] th,
+        [data-testid="stDataFrame"] td {
+            background: #1f2937 !important;
+            color: var(--dark-text) !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 #  INPUT 
 st.markdown("### 🎙️ Voice to Text")
