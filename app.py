@@ -388,6 +388,57 @@ st.markdown("### 🔍 Analyze whether a news article is **Real or Fake**")
 #  SESSION STATE 
 if "history" not in st.session_state:
     st.session_state.history = []
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = [
+        {
+            "role": "assistant",
+            "content": (
+                "Hi! I can help you use the Fake News Detector. "
+                "Ask about voice input, supported languages, dark mode, "
+                "or paste an article for a model prediction."
+            ),
+        }
+    ]
+
+
+def assistant_reply(message):
+    """Return a local assistant response for app help or article analysis."""
+    normalized_message = message.lower().strip()
+
+    if any(keyword in normalized_message for keyword in ("voice", "microphone", "speak")):
+        return "Choose a voice language, click Start speaking, then copy the transcript into the article box."
+
+    if any(keyword in normalized_message for keyword in ("language", "hindi", "spanish", "french", "german")):
+        return "The voice tool supports English US/UK, Spanish, French, German, Hindi, Japanese, and Brazilian Portuguese."
+
+    if "dark" in normalized_message or "theme" in normalized_message:
+        return "Use the Dark mode toggle in the sidebar. It changes the interface to a high-contrast dark theme."
+
+    if "history" in normalized_message or "download" in normalized_message:
+        return "Predictions appear in the History tab. Open Download to export the current session as a CSV file."
+
+    should_analyze = (
+        len(message.split()) >= 20
+        or any(keyword in normalized_message for keyword in ("classify", "check this", "is this fake", "is this real"))
+    )
+    if should_analyze:
+        input_vector = vectorizer.transform([message])
+        prediction = model.predict(input_vector)[0]
+        try:
+            probabilities = model.predict_proba(input_vector)[0]
+            fake_probability = probabilities[0]
+            real_probability = probabilities[1]
+        except Exception:
+            fake_probability = 1 - prediction
+            real_probability = prediction
+        result = "REAL" if prediction == 1 else "FAKE"
+        return (
+            f"The model predicts **{result}**. Confidence: "
+            f"Real {real_probability * 100:.2f}% and Fake {fake_probability * 100:.2f}%. "
+            "This is an AI estimate, not a fact-check."
+        )
+
+    return "I can help with voice input, language selection, dark mode, prediction history, or article classification."
 
 #  SIDEBAR 
 with st.sidebar:
@@ -790,7 +841,7 @@ if st.button("🚀 Check News"):
         st.warning("⚠️ Please enter a news article")
 
 #  TABS 
-tab1, tab2 = st.tabs(["📜 History", "📥 Download"])
+tab1, tab2, tab3 = st.tabs(["📜 History", "📥 Download", "🤖 AI Assistant"])
 
 #  HISTORY 
 with tab1:
@@ -809,6 +860,22 @@ with tab2:
         st.download_button("📥 Download History", csv, "history.csv", "text/csv")
     else:
         st.info("Nothing to download yet")
+
+    # AI ASSISTANT
+    with tab3:
+        st.subheader("AI Assistant")
+        st.caption("Local assistant for app help and model-based article analysis")
+        for chat_message in st.session_state.chat_messages:
+            with st.chat_message(chat_message["role"]):
+                st.markdown(chat_message["content"])
+
+        prompt = st.chat_input("Ask about the app or paste a news article...")
+        if prompt:
+            st.session_state.chat_messages.append({"role": "user", "content": prompt})
+            st.session_state.chat_messages.append(
+                {"role": "assistant", "content": assistant_reply(prompt)}
+            )
+            st.rerun()
 
 #  FOOTER 
 st.markdown("---")
