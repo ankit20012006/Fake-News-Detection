@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import joblib
 import pandas as pd
 import plotly.express as px
@@ -402,6 +403,84 @@ with st.sidebar:
         st.rerun()
 
 #  INPUT 
+st.markdown("### 🎙️ Voice to Text")
+voice_languages = {
+    "English (US)": "en-US",
+    "English (UK)": "en-GB",
+    "Spanish": "es-ES",
+    "French": "fr-FR",
+    "German": "de-DE",
+    "Hindi": "hi-IN",
+    "Japanese": "ja-JP",
+    "Portuguese (Brazil)": "pt-BR",
+}
+selected_voice_language = st.selectbox(
+    "🌐 Voice language",
+    options=list(voice_languages),
+    index=0,
+    help="Choose the language you will speak before starting the microphone.",
+)
+components.html(
+    """
+    <style>
+        body { margin: 0; font-family: sans-serif; }
+        .voice-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        button { border: 1px solid #c8b8e8; border-radius: 8px; padding: 9px 14px; cursor: pointer; }
+        #start { background: #563d8f; color: white; }
+        #stop { background: #fff; color: #563d8f; }
+        #copy { background: #fff3c4; color: #563d8f; }
+        #status { color: #5d3d88; font-size: 0.9rem; }
+        #transcript { width: 100%; min-height: 58px; margin-top: 10px; padding: 9px;
+            border: 1px solid #c8b8e8; border-radius: 8px; resize: vertical; }
+    </style>
+    <div class="voice-box">
+        <button id="start" type="button">🎙️ Start speaking</button>
+        <button id="stop" type="button">⏹ Stop</button>
+        <button id="copy" type="button">📋 Copy transcript</button>
+        <span id="status">Ready</span>
+    </div>
+    <textarea id="transcript" placeholder="Your spoken words will appear here..."></textarea>
+    <script>
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const start = document.getElementById('start');
+        const stop = document.getElementById('stop');
+        const copy = document.getElementById('copy');
+        const transcript = document.getElementById('transcript');
+        const status = document.getElementById('status');
+        let recognition;
+
+        if (!SpeechRecognition) {
+            start.disabled = true;
+            status.textContent = 'Voice input is not supported in this browser.';
+        } else {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = '__VOICE_LANGUAGE__';
+            recognition.onstart = () => { status.textContent = 'Listening...'; };
+            recognition.onerror = (event) => { status.textContent = 'Microphone error: ' + event.error; };
+            recognition.onend = () => { status.textContent = 'Ready'; };
+            recognition.onresult = (event) => {
+                let spoken = '';
+                for (let index = event.resultIndex; index < event.results.length; index++) {
+                    spoken += event.results[index][0].transcript;
+                }
+                transcript.value = spoken;
+            };
+            start.onclick = () => recognition.start();
+            stop.onclick = () => recognition.stop();
+        }
+
+        copy.onclick = async () => {
+            if (!transcript.value.trim()) return;
+            await navigator.clipboard.writeText(transcript.value);
+            status.textContent = 'Copied. Paste it into the article box below.';
+        };
+    </script>
+    """.replace("__VOICE_LANGUAGE__", voice_languages[selected_voice_language]),
+    height=145,
+)
+
 user_input = st.text_area("✍️ Enter News Article", height=200)
 
 #  BUTTON 
